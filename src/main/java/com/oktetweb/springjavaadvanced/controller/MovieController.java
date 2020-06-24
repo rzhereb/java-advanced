@@ -11,7 +11,8 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.ArrayList;
 import java.util.List;
 
-@RestController(value = "/movies")
+@RestController
+@RequestMapping(value = "/movies")
 public class MovieController {
 
     private List<Movie> movies = new ArrayList<>();
