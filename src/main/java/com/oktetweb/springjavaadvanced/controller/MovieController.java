@@ -1,9 +1,13 @@
 package com.oktetweb.springjavaadvanced.controller;
 
 import com.oktetweb.springjavaadvanced.model.Movie;
-import com.oktetweb.springjavaadvanced.repository.MovieRepository;
+import com.oktetweb.springjavaadvanced.service.IMovieService;
+import com.oktetweb.springjavaadvanced.validation.MovieValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -11,34 +15,29 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping(value = "/movies")
 public class MovieController {
 
     @Autowired
-    private MovieRepository movieRepository;
+    private IMovieService movieService;
 
-    private List<Movie> movies = new ArrayList<>();
-
-    {
-        movies.add(new Movie(1, "LOTR: ROTK", "3rd movie LOTR"));
-        movies.add(new Movie(2, "Harry Potter GoF", "4th movie HP"));
-    }
+    @Autowired
+    private MovieValidator movieValidator;
 
     @RequestMapping(method = RequestMethod.GET)
     public List<Movie> getMovies() {
-        return movieRepository.findAll();
+        return movieService.getAllMovies();
     }
 
     @RequestMapping(method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
-    public Movie createMovie(@RequestBody Movie movie) {
-        movieRepository.save(movie);
-        return movie;
+    public Movie createMovie(@RequestBody @Valid Movie movie) {
+        return movieService.insertMovie(movie);
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
@@ -55,8 +54,7 @@ public class MovieController {
 //        }
 //        return movie;
         movie.setId(id);
-        movieRepository.save(movie);
-        return movie;
+        return movieService.updateMovie(movie);
     }
 
     @RequestMapping(method = RequestMethod.DELETE, value = "/{id}")
@@ -67,6 +65,11 @@ public class MovieController {
 //                .findFirst();
 //        movieOptional.ifPresent(movie -> movies.remove(movie));
 
-        movieRepository.deleteById(id);
+        movieService.deleteMovie(id);
+    }
+
+    @InitBinder
+    private void initBinder(WebDataBinder webDataBinder) {
+        webDataBinder.addValidators(movieValidator);
     }
 }
