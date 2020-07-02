@@ -34,10 +34,10 @@ public class MovieController {
         return movieService.getAllMovies();
     }
 
-    @RequestMapping(method = RequestMethod.POST)
+    @RequestMapping(method = RequestMethod.POST, value = "/{directorId}")
     @ResponseStatus(HttpStatus.CREATED)
-    public Movie createMovie(@RequestBody @Valid Movie movie) {
-        return movieService.insertMovie(movie);
+    public Movie createMovie(@RequestBody @Valid Movie movie, @PathVariable Integer directorId) {
+        return movieService.insertMovie(movie, directorId);
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
