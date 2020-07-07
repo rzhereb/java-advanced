@@ -1,23 +1,23 @@
 package com.oktetweb.springjavaadvanced.controller;
 
+import com.oktetweb.springjavaadvanced.dtos.MovieDTO;
 import com.oktetweb.springjavaadvanced.model.Movie;
 import com.oktetweb.springjavaadvanced.service.IMovieService;
 import com.oktetweb.springjavaadvanced.validation.MovieValidator;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
-import java.util.ArrayList;
-import java.util.List;
 
 @RestController
 @RequestMapping(value = "/movies")
@@ -30,8 +30,10 @@ public class MovieController {
     private MovieValidator movieValidator;
 
     @RequestMapping(method = RequestMethod.GET)
-    public List<Movie> getMovies() {
-        return movieService.getAllMovies();
+    public MovieDTO getMovies(@RequestParam(defaultValue = "0") int page,
+                              @RequestParam(defaultValue = "3") int size) {
+        PageRequest pageRequest = PageRequest.of(page, size);
+        return movieService.getMovies(pageRequest);
     }
 
     @RequestMapping(method = RequestMethod.POST, value = "/{directorId}")

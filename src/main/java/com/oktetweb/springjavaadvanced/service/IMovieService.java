@@ -1,14 +1,14 @@
 package com.oktetweb.springjavaadvanced.service;
 
+import com.oktetweb.springjavaadvanced.dtos.MovieDTO;
 import com.oktetweb.springjavaadvanced.model.Movie;
-
-import java.util.List;
+import org.springframework.data.domain.PageRequest;
 
 public interface IMovieService {
 
     void deleteMovie(Integer id);
 
-    List<Movie> getAllMovies();
+    MovieDTO getMovies(PageRequest pageRequest);
 
     Movie insertMovie(Movie movie, int directorId);
 
