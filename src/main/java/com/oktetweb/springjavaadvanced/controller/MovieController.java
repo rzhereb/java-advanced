@@ -7,15 +7,10 @@ import com.oktetweb.springjavaadvanced.validation.MovieValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.WebDataBinder;
-import org.springframework.web.bind.annotation.InitBinder;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
@@ -40,10 +35,12 @@ public class MovieController {
         return movieService.getMovies(pageRequest);
     }
 
-    @RequestMapping(method = RequestMethod.POST, value = "/{directorId}")
+    @RequestMapping(method = RequestMethod.POST, value = "/{directorId}",
+            consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
-    public Movie createMovie(@RequestBody @Valid Movie movie, @PathVariable Integer directorId) {
-        return movieService.insertMovie(movie, directorId);
+    public Movie createMovie(@ModelAttribute @Valid Movie movie, @PathVariable Integer directorId,
+                             @RequestParam MultipartFile file) {
+        return movieService.insertMovie(movie, file, directorId);
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
